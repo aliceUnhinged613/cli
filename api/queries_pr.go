@@ -76,6 +76,8 @@ type PullRequest struct {
 				StatusCheckRollup struct {
 					Contexts struct {
 						Nodes []struct {
+							Name       string
+							Context    string
 							State      string
 							Status     string
 							Conclusion string
@@ -186,6 +188,7 @@ func (pr *PullRequest) ChecksStatus() (summary PullRequestChecksStatus) {
 	}
 	commit := pr.Commits.Nodes[0].Commit
 	for _, c := range commit.StatusCheckRollup.Contexts.Nodes {
+		fmt.Printf("DEBUG %#v\n", c)
 		state := c.State // StatusContext
 		if state == "" {
 			// CheckRun
@@ -273,9 +276,11 @@ func PullRequests(client *Client, repo ghrepo.Interface, currentPRNumber int, cu
 						contexts(last: 100) {
 							nodes {
 								...on StatusContext {
+									context
 									state
 								}
 								...on CheckRun {
+									name
 									status
 									conclusion
 								}
@@ -424,6 +429,21 @@ func PullRequestByNumber(client *Client, repo ghrepo.Interface, number int) (*Pu
 					nodes {
 						commit {
               oid
+						  statusCheckRollup {
+						    contexts(last: 100) {
+						      nodes {
+						  		  ...on StatusContext {
+						  			  context
+						  				state
+						  			}
+						  			...on CheckRun {
+						  			  name
+						  				status
+						  				conclusion
+						  			}
+						  		}
+						  	}
+						  }
             }
           }
 				}
@@ -535,6 +555,21 @@ func PullRequestForBranch(client *Client, repo ghrepo.Interface, baseBranch, hea
 					  nodes {
 						  commit {
 							  oid
+								statusCheckRollup {
+								  contexts(last: 100) {
+								    nodes {
+										  ...on StatusContext {
+											  context
+												state
+											}
+											...on CheckRun {
+											  name
+												status
+												conclusion
+											}
+										}
+									}
+								}
 							}
 					  }
 					}

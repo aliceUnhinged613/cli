@@ -9,6 +9,8 @@ import (
 	"github.com/cli/cli/utils"
 )
 
+// TODO incorporate statuses into the final CheckRun shit. Consider more vague naming.
+
 type CheckRunPayload struct {
 	Name        string
 	Status      string

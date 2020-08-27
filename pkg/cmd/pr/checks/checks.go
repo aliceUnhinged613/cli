@@ -73,6 +73,11 @@ func checksRun(opts *ChecksOptions) error {
 		return err
 	}
 
+	for _, node := range pr.Commits.Nodes[0].Commit.StatusCheckRollup.Contexts.Nodes {
+		fmt.Printf("DEBUG %#v\n", node)
+		// TODO parse this stuff instead of making a new request.
+	}
+
 	runList, err := shared.CheckRuns(apiClient, repo, pr)
 	if err != nil {
 		return err
